@@ -36,6 +36,9 @@ public class Job {
     private JobStatus jobStatus;
 
     @Column(nullable=false)
+    private String lastError;
+
+    @Column(nullable=false)
     private int retryCount;
 
     @Column(nullable=false)

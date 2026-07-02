@@ -5,22 +5,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import side_job.app.entities.Job;
 import side_job.app.entities.JobContext;
 import side_job.app.utilities.Interfaces.JobHandler;
+import tools.jackson.databind.ObjectMapper;
 
 @Component
 public class JobMatcher {
     private final Map<String, JobHandler<?>> handlers;
 
-    private final ModelMapper modelMapper;
+    private final ObjectMapper objectMapper;
 
-    public JobMatcher(List<JobHandler<?>> handlerList, ModelMapper modelMapper) { 
+    public JobMatcher(List<JobHandler<?>> handlerList, ObjectMapper objectMapper) { 
         this.handlers = handlerList.stream().collect(Collectors.toMap(JobHandler::getType, h -> h));
-        this.modelMapper = modelMapper;
+        this.objectMapper = objectMapper;
     }
 
     public void dispatch(Job job, int attempt) throws Exception { 
@@ -29,8 +29,11 @@ public class JobMatcher {
         invoke(handler, job, attempt);
     }
 
-    public <T> void invoke(JobHandler<T> handler,  Job job, int attempt) throws Exception {
-        T payload = modelMapper.map(job.getPayload(), handler.payloadType());
+    private <T> void invoke(JobHandler<T> handler,  Job job, int attempt) throws Exception {
+        T payload = objectMapper.readValue(
+            job.getPayload(),
+            handler.payloadType()
+        );
 
         JobContext context = new JobContext(job.getId(), attempt, Instant.now());
 
