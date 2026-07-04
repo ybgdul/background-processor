@@ -47,6 +47,8 @@ public class Job {
     @Column(nullable=false)
     private Instant createdAt;
 
+    @Column(nullable = false)
+    private Instant processingAt;
 
     @Column(nullable=false)
     private Instant updatedAt;
@@ -59,6 +61,7 @@ public class Job {
         this.retryCount = 0;
         this.createdAt = Instant.now();
         this.updatedAt = Instant.now();
+        this.processingAt = Instant.now();
     }
 
     @PreUpdate
