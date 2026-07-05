@@ -24,9 +24,10 @@ public class NotificationJobHandler implements JobHandler<NotificationJobPayload
         return NotificationJobPayload.class;
     }
 
-    @Overridedsad
+    @Override
     public void handle(JobContext context, NotificationJobPayload payload) throws Exception {
         
+        notificationService.sendPush(payload.id(), payload.fcmToken(), payload.title(), payload.body());
     }
 
     
