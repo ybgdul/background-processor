@@ -11,7 +11,9 @@ import side_job.app.entities.Job;
 import side_job.app.repositories.JobRepo;
 import side_job.app.utilities.Enums.JobStatus;
 import side_job.app.utilities.Exceptions.EmailValidationFailException;
+import side_job.app.utilities.Exceptions.NotificationValidationFailException;
 import side_job.app.utilities.Interfaces.JobQueue;
+import side_job.app.utilities.Interfaces.RethrowFailure;
 import side_job.app.utilities.POJOs.MaxRetries;
 import side_job.app.utilities.POJOs.RetryPolicy;
 
@@ -53,7 +55,7 @@ public class JobWorker implements Runnable {
     }
 
     private void handleFailure(Job job, Exception e) { 
-        if(e instanceof EmailValidationFailException) throw new EmailValidationFailException(e.getMessage());
+        if(e instanceof RethrowFailure) throw (RuntimeException) e;
         int nextTry = job.getRetryCount() + 1;
         job.setRetryCount(nextTry);
         job.setLastError(e.getMessage());

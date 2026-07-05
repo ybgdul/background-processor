@@ -16,8 +16,11 @@ public class JobClient {
     
     public void enqueue(String type, String payload) { 
         Job job = new Job(type, payload, Instant.now());
+        jobQueue.submit(job);
+    }
 
-
+    public void enqueueFuture(String type, String payload, Instant runAt) { 
+        Job job = new Job(type, payload, runAt);
         jobQueue.submit(job);
     }
 }
